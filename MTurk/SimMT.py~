@@ -1,0 +1,84 @@
+from MT import MT
+
+class FakeHIT():
+    def __init__(self):
+        self.HITStatus = 'Reviewable'
+    
+class SimMT(MT):
+    def __init__(self, file0, file1, numberOfProblems):
+        self.usedWorkers = [[] for i in range(0, numberOfProblems)]
+        self.answers0 = [[] for i in range(0, numberOfProblems)]
+        self.answers1 = [[] for i in range(0, numberOfProblems)]
+        for i in range(0, numberOfProblems):
+            f0 = open("%sq%d" % (file0, i), 'r').read().split("\n")
+            f1 = open("%sq%d" % (file1, i), 'r').read().split("\n")
+            f0 = f0[0:len(f0)-1]
+            f1 = f1[0:len(f1)-1]
+
+            for entry in f0:
+                entry = entry.split("\t")
+                vote = entry[0]
+                worker = entry[1]
+                self.answers0[i].append((vote, worker, 1, i))
+            for entry in f1:
+                entry = entry.split("\t")
+                vote = entry[0]
+                worker = entry[1]
+                self.answers1[i].append((vote, worker, 1, i))
+
+    def createHIT(self, workflow, question, title, reward, duration, lifetime,
+                  max_assignments, problemNumber):
+            return 'W%dX%d' % (workflow, problemNumber)
+
+    def getHIT(self, HITId):
+        return [FakeHIT()]
+
+    def getAssignments(self, HITId, page_size, page_number):
+        assignments = []
+        HITId = HITId.split("X")
+        problemType = HITId[0]
+        problemNumber = int(HITId[1])
+        if problemType == 'W0':
+            while True:
+                if len(self.answers0[problemNumber]) > 1:
+                    nextAssignment = self.answers0[problemNumber].pop(0)
+                else:
+                    print "WARNING: ONE VOTE LEFT FOR PROB %d" % problemNumber
+                    nextAssignment = self.answers0[problemNumber][0]
+                if self.getWorker(nextAssignment) in self.usedWorkers[problemNumber] and len(self.answers0[problemNumber]) > 1:
+                    continue
+                else:
+                    assignments.append(nextAssignment)
+                    break
+        else:
+            while True:
+                if len(self.answers1[problemNumber]) > 1:
+                    nextAssignment = self.answers1[problemNumber].pop(0)
+                else:
+                    print "WARNING: ONE VOTE LEFT FOR PROB %d" % problemNumber
+                    nextAssignment = self.answers1[problemNumber][0]
+                if self.getWorker(nextAssignment) in self.usedWorkers[problemNumber] and len(self.answers1[problemNumber]) > 1:
+                    continue
+                else:
+                    assignments.append(nextAssignment)
+                    break            
+        return assignments
+
+    def getObservation(self, assignment):
+        (obs, worker, assignmentId, pn) = assignment
+        return obs
+
+    def getWorker(self, assignment):
+        (obs, worker, assignmentId, pn) = assignment
+        return worker
+
+    def getProblemNumber(self, assignment):
+        (obs, worker, assignmentid, pn) = assignment
+        return pn
+
+    def approveAssignment(self, assignment):
+        return True
+
+    def disposeHIT(self, HITId):
+        return True
+

@@ -1,0 +1,87 @@
+from utils import getDifficulties, calcAccuracy
+from itertools import product
+############################
+# There are (numDiffs) * (numDiffs) * 2 states +  1 terminal state at the end.
+# We index as follows: Suppose Type A is the 0th difficulty, 
+# type B is the 5th difficulty, and the answer is zero.
+# Then, the corresponding state number is 
+# (0 * numDiffs * numDiffs) + (0 * numDiffs) + 5.
+#
+# Essentially, the first half of the states represents answer zero
+# The second half represents answer one
+# Each half is divided into numDiffs sections, representing 
+# each possible difficulty for a typeA question.
+# Then each section is divided into numDiffs sections, representing
+# each possible difficulty for a typeB question.
+###########################
+
+def genPOMDPWithTerminal(filename, reward, cost, aGamma, bGamma):    
+    difficulties = getDifficulties(0.1)
+    numDiffs = len(difficulties)
+    
+    #Add one absorbing state
+    numberOfStates = ((numDiffs) * (numDiffs) * 2) + 1
+
+    file = open(filename, 'w')
+    file.write('discount: 0.9999\n')
+    file.write('values: reward\n')
+    file.write('states: %d\n' % numberOfStates)
+    file.write('actions: ballotA ballotB submitZero submitOne\n')
+    file.write('observations: Zero One None\n')
+
+    for i in range(0, numberOfStates):
+        file.write('T: ballotA : %d : %d %f\n' % (i, i, 1.0))
+        file.write('T: ballotB : %d : %d %f\n' % (i, i, 1.0))
+
+    #Add transitions to absorbing state
+    file.write('T: submitZero : * : %d %f\n' % (numberOfStates-1, 1.0))
+    file.write('T: submitOne : * : %d %f\n' % (numberOfStates-1, 1.0))
+
+    #Add observations in absorbing state
+    file.write('O: * : %d : None %f\n' % (numberOfStates-1, 1.0))
+
+    for i in range(0, 2): #answer
+        for j in range(0, numDiffs): #type A ballot
+            for k in range(0, numDiffs): #type B ballot
+                state = ((i * numDiffs * numDiffs) + 
+                         (j * numDiffs) +
+                         k)
+                aDiff = difficulties[j]
+                bDiff = difficulties[k]
+                file.write('O: submitZero: %d : None %f\n' % (state, 1.0))
+                file.write('O: submitOne: %d : None %f\n' % (state, 1.0))
+                if i == 0: #if the answer is 0
+                    file.write('O: ballotA : %d : Zero %f\n' % (state, 
+                                                              calcAccuracy(aGamma, aDiff)))
+                    file.write('O: ballotB : %d : Zero %f\n' % (state,
+                                                              calcAccuracy(bGamma, bDiff)))
+                    file.write('O: ballotA : %d : One %f\n' % (state,
+                                                             1.0 - calcAccuracy(aGamma, aDiff)))
+                    file.write('O: ballotB : %d : One %f\n' % (state,
+                                                             1.0 - calcAccuracy(bGamma, bDiff)))
+                else: # if the answer is 1
+                    file.write('O: ballotA : %d : Zero %f\n' % (state, 
+                                                              1.0 - calcAccuracy(aGamma, aDiff)))
+                    file.write('O: ballotB : %d : Zero %f\n' % (state,
+                                                              1.0 - calcAccuracy(bGamma, bDiff)))
+                    file.write('O: ballotA : %d : One %f\n' % (state,
+                                                             calcAccuracy(aGamma, aDiff)))
+                    file.write('O: ballotB : %d : One %f\n' % (state,
+                                                             calcAccuracy(bGamma, bDiff)))
+    
+    file.write('R: * : * : * : * %f\n' % (-1 * cost))
+
+
+    for i in range(0, numberOfStates-1):
+        if i < (numberOfStates-1) / 2:
+            file.write('R: submitZero : %d : %d : * %f\n' % (i, numberOfStates-1, 1))
+            file.write('R: submitOne : %d : %d : * %f\n' % (i, numberOfStates-1, reward))            
+        else:
+            file.write('R: submitOne : %d : %d : * %f\n' % (i, numberOfStates-1, 1))
+            file.write('R: submitZero : %d : %d : * %f\n' % (i, numberOfStates-1, reward))
+
+    #Add rewards in absorbing state
+    file.write('R: * : %d : %d : * %f\n' % (numberOfStates-1, numberOfStates-1, 0))
+
+    file.close()
+

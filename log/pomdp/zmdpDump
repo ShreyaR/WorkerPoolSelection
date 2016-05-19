@@ -1,0 +1,31 @@
+00000 reading model file and allocating data structures
+00000 calculating initial heuristics
+00000 finished initialization, beginning to improve policy
+00000      1 calls to solver, bounds [-195.6988 ..  -2.0828], regret <= 193.616
+00010    400 calls to solver, bounds [-83.3617 .. -22.2913], regret <= 61.0704
+00020    496 calls to solver, bounds [-83.3610 .. -23.9409], regret <= 59.4201
+00030    520 calls to solver, bounds [-83.3610 .. -24.0893], regret <= 59.2717
+00040    532 calls to solver, bounds [-83.3609 .. -24.4527], regret <= 58.9082
+00050    538 calls to solver, bounds [-83.3609 .. -24.4672], regret <= 58.8936
+00060    542 calls to solver, bounds [-83.3609 .. -24.4859], regret <= 58.875
+00071    546 calls to solver, bounds [-83.3608 .. -24.9552], regret <= 58.4056
+00087    550 calls to solver, bounds [-83.3608 .. -24.9582], regret <= 58.4026
+00098    552 calls to solver, bounds [-83.3608 .. -24.9642], regret <= 58.3966
+00112    554 calls to solver, bounds [-83.3608 .. -24.9722], regret <= 58.3886
+00129    556 calls to solver, bounds [-83.3608 .. -24.9780], regret <= 58.3828
+00141    557 calls to solver, bounds [-83.3608 .. -24.9802], regret <= 58.3806
+00163    559 calls to solver, bounds [-83.3608 .. -24.9914], regret <= 58.3694
+00185    561 calls to solver, bounds [-83.3608 .. -25.0228], regret <= 58.338
+00204    563 calls to solver, bounds [-83.3608 .. -25.0775], regret <= 58.2832
+00216    564 calls to solver, bounds [-83.3608 .. -25.1513], regret <= 58.2095
+00229    565 calls to solver, bounds [-83.3608 .. -25.1608], regret <= 58.2
+00247    567 calls to solver, bounds [-83.3608 .. -25.2136], regret <= 58.1472
+00259    568 calls to solver, bounds [-83.3608 .. -25.2249], regret <= 58.1358
+00271    569 calls to solver, bounds [-83.3608 .. -25.2544], regret <= 58.1063
+00286    570 calls to solver, bounds [-83.3608 .. -25.3152], regret <= 58.0456
+00299    571 calls to solver, bounds [-83.3607 .. -25.3950], regret <= 57.9658
+00315    572 calls to solver, bounds [-83.3607 .. -25.4597], regret <= 57.9011
+00315 terminating run; passed specified timeout of 300 seconds
+00315 writing policy to 'LiveExperiments/35,1.00,1.00,54,0.90,1.00/1000/Unstarred/out.policy'
+00316 finishing logging (e.g., writing qValuesOutputFile if it was requested)
+00316 done

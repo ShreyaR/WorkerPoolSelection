@@ -1,0 +1,47 @@
+--------------------------------------------------------------------------------
+AgentHunt v1.0
+--------------------------------------------------------------------------------
+Copyright (C) 2012 Christopher H. Lin.
+University of Washington
+chrislin@cs.washington.edu
+
+Please use the following reference for citation of work that benefits from use of any portion of AgentHunt:
+@inproceedings{lin-aaai12,
+  author = "Christopher H. Lin and Mausam and Daniel S. Weld",
+  title = "Dynamically Switching between Synergistic Workflows for Crowdsourcing",
+  booktitle = "AAAI",
+  year = 2012
+}
+
+Please let me know if you have spotted a bug or have any questions or comments. 
+This software was tested using python 2.7.3 and php 5.2 on Ubuntu 12.04.
+REQUIREMENTS
+------------
+Webserver with Php and Python. 
+Python packages:
+-Boto
+-numpy
+C (optional)
+Amazon AWS MTurk Account
+
+USE OF OTHER SOFTWARE
+---------------------
+This software uses and/or modifies the following publicly available software:
+Optimal Label Inference Software by Jacob Whitehill (NIPS 2009)
+ZMDP by Trey Smith
+
+USAGE
+-----------
+Copy directory to webserver.
+Set configuration settings in main.py.
+Set configuration settings in clean.py.
+Replace the following functions in client/workflow.php to 
+define your own workflows:
+renderWorkflow0
+renderWorkflow1
+renderNoWorkflow
+renderPreview
+See client/workflow.php for an example.
+
+>python clean.py
+>python main.py

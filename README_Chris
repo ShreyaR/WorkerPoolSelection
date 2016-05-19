@@ -1,0 +1,87 @@
+--------------------------------------------------------------------------------
+AgentHunt v1.0
+--------------------------------------------------------------------------------
+Copyright (C) 2012 Christopher H. Lin.
+University of Washington
+chrislin@cs.washington.edu
+
+Please use the following reference for citation of work that benefits from use of any portion of AgentHunt:
+@inproceedings{lin-aaai12,
+  author = "Christopher H. Lin and Mausam and Daniel S. Weld",
+  title = "Dynamically Switching between Synergistic Workflows for Crowdsourcing",
+  booktitle = "AAAI",
+  year = 2012
+}
+
+Please let me know if you have spotted a bug or have any questions or comments
+or you need help. 
+This software was tested using python 2.7.3 and php 5.2 on Ubuntu 12.04.
+
+REQUIREMENTS
+------------
+Webserver
+Php 
+Python, including:
+-Boto
+-numpy
+C, including:
+-GSL
+Amazon AWS MTurk Account
+Gnu Make
+Gnu Flex
+Gnu Bison
+Perl
+
+USE OF OTHER SOFTWARE
+---------------------
+This software uses and/or modifies the following publicly available software:
+Optimal Label Inference Software by Jacob Whitehill (NIPS 2009)
+ZMDP by Trey Smith
+
+USAGE
+-----------
+Copy directory to webserver.
+Set configuration settings in main.py.
+Set configuration settings in clean.py.
+Replace the following functions in client/workflow.php to 
+define your own workflows:
+renderWorkflow0
+renderWorkflow1
+renderNoWorkflow
+renderPreview
+See client/workflow.php for an example.
+
+>cd AgentHuntRelease1.0
+>cd EM
+>make
+>cd ../ModelLearning/zmdp-1.1.7/src
+>make install
+>cd ../../../
+>python clean.py
+>python main.py
+
+
+KNOWN ISSUE
+------------
+Because of the way Amazon Mechanical Turk works, the following scenario will
+cause AgentHunt to not terminate:
+1) Worker Bob accepts an assignment
+2) Worker Bob abandons the assignment he accepts (he does not complete it)
+MTurk does not notify the requester of such scenarios and does not provide
+an API that allows one to check for abandoned assignments, leading AgentHunt
+to believe that once a task has been accepted, it will be completed. Thus,
+it will continue to wait for Worker Bob to complete the assignment. An attempt
+at a fix will lead to race conditions. 
+
+Thus, we recommend that your workflow preview enables workers to make a 
+good assessment of whether or not they wish to complete the task.
+AgentHunt also logs all results from workers, so that if such a scenario occurs,
+data is not lost.
+Finally, AgentHunt is written so that you can use a "fake" mechanical turk.
+The file MTurk/SimMT.py allows you to poll your own files for observations
+instead of mechanical turk. To use this mechanism, change the following line
+in main.py:
+mt = RealMT(...
+to
+mt = SimMT(...
+Obviously, you can rewrite SimMT to read files in whatever format you wish.
